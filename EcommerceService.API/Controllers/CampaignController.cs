@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using EcommerceService.Core.DTOs.Base;
 using EcommerceService.Core.DTOs.Campaign;
-using EcommerceService.Core.DTOs.Order;
-using EcommerceService.Core.DTOs.Product;
 using EcommerceService.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,13 +26,22 @@ public class CampaignController : ControllerBase
         };
     }
     
-    [HttpPost("{name}")]
-    public ActionResult<CustomResponseDto> Detail(string name)
+    [HttpGet("{name}")]
+    public ActionResult<CustomResponseDto<CampaignDto>> Detail(string name)
     {
-        _campaignService.Detail(name);
+        var campaignDto = _campaignService.Detail(name);
+        
+        if (campaignDto is null)
+            return new NoContentResult();
         
         return new OkObjectResult(
-            new CustomResponseDto().Success((int) HttpStatusCode.OK));
+            new CustomResponseDto<CampaignDto>().Success((int) HttpStatusCode.OK, campaignDto));
+    }
+
+    [HttpPost("increase")]
+    public ActionResult<CustomResponseDto<IncreaseDto>> Increase(int hour)
+    {
+        return Ok();
     }
     
 }

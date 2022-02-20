@@ -1,4 +1,6 @@
-﻿namespace EcommerceService.Core.DTOs.Campaign;
+﻿using System.Runtime.CompilerServices;
+
+namespace EcommerceService.Core.DTOs.Campaign;
 
 public class CampaignDto
 {
@@ -8,7 +10,10 @@ public class CampaignDto
     
     public int TotalSales { get; set; }
     
-    public int Turnover { get; set; }
+    public int Turnover
+    {
+        get => TotalSales * TargetSales;
+    }
     
-    public double AvarageItemPrice { get; set; }
+    public decimal AvarageItemPrice { get; set; }
 }

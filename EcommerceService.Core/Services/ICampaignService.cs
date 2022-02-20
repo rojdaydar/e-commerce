@@ -6,5 +6,7 @@ public interface ICampaignService
 {
     void Create(CreateCampaignInput createCampaignInput);
 
-    CampaignDto Detail(string name);
+    CampaignDto? Detail(string name);
+
+    Task CampaingJob();
 }

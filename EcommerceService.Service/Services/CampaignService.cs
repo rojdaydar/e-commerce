@@ -4,6 +4,7 @@ using EcommerceService.Core.DTOs.Campaign;
 using EcommerceService.Core.Exceptions;
 using EcommerceService.Core.Repositories;
 using EcommerceService.Core.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceService.Service.Services;
 
@@ -35,14 +36,68 @@ public class CampaignService : ICampaignService
         campaign.ProductId = product.Id;
         var addedCampaign = _campaignRepository.Add(campaign);
         _campaignRepository.SaveChanges();
-
-        if (addedCampaign is {Id: 0})
-            throw new Exception();
     }
 
-    public CampaignDto Detail(string name)
+    public CampaignDto? Detail(string name)
     {
-        throw new Exception();
+        var campaign = _campaignRepository.Query().Include(c => c.Product)
+            .Include(c => c.Orders).FirstOrDefault(c => c.Name.Equals(name) && !c.IsDeleted);
+        if (campaign is null)
+            return null;
 
+        var orders = campaign.Orders.ToList();
+        CampaignDto campaignDto = new()
+        {
+            Status = !campaign.IsDeleted,
+            TargetSales = campaign.TargetSalesCount,
+            TotalSales = calculateTotalSales(orders),
+            AvarageItemPrice = calculateAvarageItemPrice(orders)
+        };
+
+        return campaignDto;
+    }
+
+    private int calculateTotalSales(List<Order> orders)
+    {
+        if (orders.Count is 0)
+            return default;
+        return orders.Select(o => o.Quantity).Sum();
+    }
+    
+    private decimal calculateAvarageItemPrice(List<Order> orders)
+    {
+        if (orders.Count is 0)
+            return default;
+        return orders.Select(o => o.CurrentPrice).Average();
+    }
+    
+    public async Task CampaingJob()
+    {
+        var campaigns = _campaignRepository.Query().Include(e => e.Product).Include(d => d.Orders).ToList();
+
+        foreach (var campaign in campaigns)
+        {
+            long totalSoldProduct = campaign.Orders.Select(o => o.Quantity).Sum();
+
+            long totalProductStock = totalSoldProduct + campaign.Product.Stock;
+
+            DateTime currentDate = DateTime.Now;
+            DateTime campaignExpireDate = campaign.CreatedDate.AddHours(campaign.Duration);
+
+            if (currentDate <= campaignExpireDate)
+            {
+                _campaignRepository.Delete(campaign);
+                await _campaignRepository.SaveChangesAsync();
+                return;
+            }
+
+            TimeSpan gab = campaignExpireDate - currentDate;
+
+            double gabTotalHours = gab.TotalHours;
+
+            double newGabPrice = (double) campaign.PriceManipulationLimit * gabTotalHours;
+
+            campaign.CurrentProductPrice = (decimal) ((double) campaign.Product.Price - newGabPrice);
+        }
     }
 }

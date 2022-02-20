@@ -27,11 +27,8 @@ public class ProductService : IProductService
         if (isExistProductByProductCode is not null)
             throw new CustomException("Ürün kaydı zaten yapılmıştır.", "2000");
 
-        var addedProduct = _productRepository.Add(product);
+        _productRepository.Add(product);
         _productRepository.SaveChanges();
-
-        if (addedProduct is {Id: 0})
-            throw new Exception();
     }
 
     public ProductDto Detail(string productCode)

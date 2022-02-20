@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using AutoMapper;
 using EcommerceService.Core.Domain;
+using EcommerceService.Core.DTOs.Campaign;
 using EcommerceService.Core.DTOs.Product;
 using EcommerceService.Core.Repositories;
 using EcommerceService.Data.Repositories;
@@ -39,6 +40,12 @@ public class ServiceTestBase : InMemoryTestBase
         _productRepository.Add(product);
         _productRepository.SaveChanges();
     }
+    
+    protected void AddCampaingToInMemory(Campaign campaign)
+    {
+        _campaignRepository.Add(campaign);
+        _campaignRepository.SaveChanges();
+    }
 
     #region Product Member Datas
 
@@ -54,7 +61,26 @@ public class ServiceTestBase : InMemoryTestBase
             }
         };
     }
+    
+    #endregion
+    
+    
+    #region Campaign Member Datas
 
-
+    public static IEnumerable<object[]> ValidCreateCampaignInput()
+    {
+        yield return new object[]
+        {
+            new CreateCampaignInput()
+            {
+                ProductCode = "P1", 
+                PriceManipulationLimit = 5,
+                Duration = 5,
+                Name = "C1",
+                TargetSalesCount = 200
+            }
+        };
+    }
+    
     #endregion
 }

@@ -38,11 +38,8 @@ public class OrderService : IOrderService
 
         updatedProductStock(product);
 
-        var addedOrder = _orderRepository.Add(order);
+        _orderRepository.Add(order);
         _orderRepository.SaveChanges();
-
-        if (addedOrder is {Id: 0})
-            throw new Exception();
     }
 
     private Product existProduct(string productCode, int quantity)
@@ -56,7 +53,7 @@ public class OrderService : IOrderService
             throw new CustomException("Stokta yeterli ürün bulunmamaktadır.", "1010");
 
         product.Stock = -quantity;
-        
+
         return product;
     }
 
