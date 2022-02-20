@@ -15,7 +15,7 @@ public class CampaignServiceTest : ServiceTestBase
 
     public CampaignServiceTest()
     {
-        _campaignService = new CampaignService(_campaignRepository, _mapper, _productRepository, _orderRepository);
+        _campaignService = new CampaignService(_campaignRepository, _mapper, _productRepository);
     }
 
     [Theory]

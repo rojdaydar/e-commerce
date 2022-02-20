@@ -12,16 +12,14 @@ public class CampaignService : ICampaignService
 {
     private readonly IRepository<Campaign> _campaignRepository;
     private readonly IRepository<Product> _productRepository;
-    private readonly IRepository<Order> _orderRepository;
     private readonly IMapper _mapper;
 
     public CampaignService(IRepository<Campaign> campaignRepository, IMapper mapper,
-        IRepository<Product> productRepository, IRepository<Order> orderRepository)
+        IRepository<Product> productRepository)
     {
         _campaignRepository = campaignRepository;
         _mapper = mapper;
         _productRepository = productRepository;
-        _orderRepository = orderRepository;
     }
 
     public void Create(CreateCampaignInput createCampaignInput)
@@ -34,7 +32,7 @@ public class CampaignService : ICampaignService
             throw new CustomException("Kampanyalı ürün bulunamadı.", "3000");
 
         campaign.ProductId = product.Id;
-        var addedCampaign = _campaignRepository.Add(campaign);
+        _campaignRepository.Add(campaign);
         _campaignRepository.SaveChanges();
     }
 
@@ -63,14 +61,14 @@ public class CampaignService : ICampaignService
             return default;
         return orders.Select(o => o.Quantity).Sum();
     }
-    
+
     private decimal calculateAvarageItemPrice(List<Order> orders)
     {
         if (orders.Count is 0)
             return default;
         return orders.Select(o => o.CurrentPrice).Average();
     }
-    
+
     public async Task CampaingJob()
     {
         var campaigns = _campaignRepository.Query().Include(e => e.Product).Include(d => d.Orders).ToList();
