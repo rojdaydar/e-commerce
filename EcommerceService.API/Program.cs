@@ -1,18 +1,25 @@
 using EcommerceService.API.Extensions;
+using EcommerceService.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddDbContext<EcommerceDbContext>(x =>
+    x.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddRegistry();
 builder.Services.AddSwagger();
+builder.WebHost.AddGraylog();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
+
+app.ApplyDbChangesAndSeed();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {

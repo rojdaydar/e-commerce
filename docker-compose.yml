@@ -1,0 +1,16 @@
+version: "3"
+services:
+  companyrelation:
+    container_name: ecommerceservice
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: atrosdc/ecommerceservice
+    environment:
+      PORT: 80
+      BUGSNAG__APIKEY: 6e73ccad8a96a37349f27b13d4b53216
+      GRAYLOG__HOST: localhost
+      GRAYLOG__PORT: 9000
+      GRAYLOG__PROTOCOL: UDP
+    ports:
+      - "80:80"

@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcommerceService.Data", "Ec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcommerceService.Service", "EcommerceService.Service\EcommerceService.Service.csproj", "{1FDFB398-D120-49A0-9271-B7DA6952414B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcommerceService.Test", "EcommerceService.Test\EcommerceService.Test.csproj", "{E45347A6-3135-4114-977A-F6A0D5B14139}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{1FDFB398-D120-49A0-9271-B7DA6952414B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FDFB398-D120-49A0-9271-B7DA6952414B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FDFB398-D120-49A0-9271-B7DA6952414B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E45347A6-3135-4114-977A-F6A0D5B14139}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E45347A6-3135-4114-977A-F6A0D5B14139}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E45347A6-3135-4114-977A-F6A0D5B14139}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E45347A6-3135-4114-977A-F6A0D5B14139}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

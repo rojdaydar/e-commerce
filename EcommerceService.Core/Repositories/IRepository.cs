@@ -23,9 +23,9 @@ public interface IRepository<TEntity> where TEntity : Base
 
     TEntity Add(TEntity entity);
 
-    TEntity Update(TEntity updated);
+    TEntity Update(TEntity entity);
 
-    void Delete(TEntity t);
+    void Delete(TEntity entity);
 
     int SaveChanges();
 

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceService.Data.Repositories;
 
-public class Repository<TEntity> : IRepository<TEntity> where TEntity :  Base
+public class Repository<TEntity> : IRepository<TEntity> where TEntity : Base
 {
     private readonly DbSet<TEntity> _dbSet;
     private readonly EcommerceDbContext _context;
@@ -61,34 +61,37 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity :  Base
 
     public TEntity Add(TEntity entity)
     {
+        entity = setBaseToAdd(entity);
         _dbSet.Add(entity);
         _context.Entry(entity).State = EntityState.Added;
 
         return entity;
     }
 
-    public TEntity Update(TEntity updated)
+    public TEntity Update(TEntity entity)
     {
-        if (updated == null)
+        if (entity == null)
             return null;
 
-        _dbSet.Attach(updated);
-        _context.Entry(updated).State = EntityState.Modified;
+        entity = setBaseToUpdate(entity);
+        _dbSet.Attach(entity);
+        _context.Entry(entity).State = EntityState.Modified;
 
-        return updated;
+        return entity;
     }
 
-    public void Delete(TEntity t)
+    public void Delete(TEntity entity)
     {
-        _context.Entry(t).State = EntityState.Deleted;
-        _dbSet.Remove(t);
+        entity = setBaseToRemove(entity);
+        _dbSet.Attach(entity);
+        _context.Entry(entity).State = EntityState.Modified;
     }
 
     public IQueryable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate)
     {
         return _dbSet.Where(predicate);
     }
-    
+
     public int SaveChanges()
     {
         return _context.SaveChanges();
@@ -97,5 +100,23 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity :  Base
     public async Task<int> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync();
+    }
+
+    private TEntity setBaseToAdd(TEntity entity)
+    {
+        entity.CreatedDate = DateTime.Now;
+        return setBaseToUpdate(entity);
+    }
+
+    private TEntity setBaseToUpdate(TEntity entity)
+    {
+        entity.UpdatedDate = DateTime.Now;
+        return entity;
+    }
+
+    private TEntity setBaseToRemove(TEntity entity)
+    {
+        entity.IsDeleted = true;
+        return setBaseToUpdate(entity);
     }
 }

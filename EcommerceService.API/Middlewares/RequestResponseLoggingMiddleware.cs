@@ -1,4 +1,8 @@
 ﻿using System.Diagnostics;
+using System.Net;
+using System.Text.Json;
+using EcommerceService.Core.DTOs.Base;
+using EcommerceService.Core.Exceptions;
 using Microsoft.IO;
 
 namespace EcommerceService.API.Middlewares;
@@ -39,6 +43,10 @@ public class RequestResponseLoggingMiddleware
         catch (Exception ex)
         {
             exception = ex;
+            
+            var response = handleException(context, ex);
+
+            context.Response.WriteAsync(response);
         }
 
         context.Response.Body.Seek(0, SeekOrigin.Begin);
@@ -103,4 +111,26 @@ public class RequestResponseLoggingMiddleware
 
         return textWriter.ToString();
     }
+    
+    private string handleException(HttpContext context, Exception exception)
+    {
+        context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+        context.Response.ContentType = "application/json";
+        
+        ErrorMessage errorMessage = new();
+        if (exception is CustomException customException)
+        {
+            context.Response.StatusCode = (int) HttpStatusCode.BadRequest;
+            errorMessage = customException.ErrorMessage;
+        }
+        else
+        {
+            errorMessage.ErrorDescription = exception.Message;
+        }
+
+        var response = new CustomResponseDto().Error(context.Response.StatusCode,errorMessage);
+
+        return JsonSerializer.Serialize(response);
+    }
+    
 }
