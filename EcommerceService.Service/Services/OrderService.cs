@@ -32,12 +32,16 @@ public class OrderService : IOrderService
         var campaign = _campaingRepository.Find(p => p.ProductId == product.Id && !p.IsDeleted);
 
         if (campaign is null)
+        {
             order.CurrentPrice = product.Price;
+            order.CampaignId = campaign.Id;
+        }
         else
+        {
             order.CurrentPrice = campaign.CurrentProductPrice;
-
+        }
         updatedProductStock(product);
-
+        
         _orderRepository.Add(order);
         _orderRepository.SaveChanges();
     }
