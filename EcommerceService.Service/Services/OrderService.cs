@@ -34,7 +34,6 @@ public class OrderService : IOrderService
         if (campaign is null)
         {
             order.CurrentPrice = product.Price;
-            order.CampaignId = campaign.Id;
         }
         else
         {
