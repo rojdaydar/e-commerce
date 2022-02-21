@@ -8,5 +8,5 @@ public interface ICampaignService
 
     CampaignDto? Detail(string name);
 
-    Task CampaingJob();
+    Task CheckCampaingJob();
 }

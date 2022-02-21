@@ -72,19 +72,14 @@ public class CampaignService : ICampaignService
         return orders.Select(o => o.CurrentPrice).Average();
     }
 
-    public async Task CampaingJob()
+    public async Task CheckCampaingJob()
     {
         var campaigns = _campaignRepository.Query().Include(e => e.Product).Include(d => d.Orders).ToList();
 
+        DateTime currentDate = DateTime.Now;
         foreach (var campaign in campaigns)
         {
-            long totalSoldProduct = campaign.Orders.Select(o => o.Quantity).Sum();
-
-            long totalProductStock = totalSoldProduct + campaign.Product.Stock;
-
-            DateTime currentDate = DateTime.Now;
             DateTime campaignExpireDate = campaign.CreatedDate.AddHours(campaign.Duration);
-
             if (currentDate <= campaignExpireDate)
             {
                 _campaignRepository.Delete(campaign);
@@ -92,13 +87,26 @@ public class CampaignService : ICampaignService
                 return;
             }
 
-            TimeSpan gab = campaignExpireDate - currentDate;
+            long totalSoldProduct = campaign.Orders.Select(o => o.Quantity).Sum();
+            long totalProductStock = totalSoldProduct + campaign.Product.Stock;
 
-            double gabTotalHours = gab.TotalHours;
+            for (int v = 5; v <= 100; v += 5)
+            {
+                double perRate = (totalProductStock * v) / 100;
 
-            double newGabPrice = (double) campaign.PriceManipulationLimit * gabTotalHours;
-
-            campaign.CurrentProductPrice = (decimal) ((double) campaign.Product.Price - newGabPrice);
+                double targetproduProductStock = totalProductStock - perRate;
+                
+                if(targetproduProductStock<totalSoldProduct)
+                {
+                    decimal currentProductPrice;
+                    currentProductPrice = campaign.CurrentProductPrice- campaign.PriceManipulationLimit;
+                    campaign.CurrentProductPrice = currentProductPrice;
+                    
+                    _campaignRepository.Update(campaign);
+                    await _campaignRepository.SaveChangesAsync();
+                    return;
+                }
+            }
         }
     }
 }
