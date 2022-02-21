@@ -1,7 +1,5 @@
 ﻿using System.Net;
-using EcommerceService.Core.DTOs.Base;
 using EcommerceService.Core.DTOs.Order;
-using EcommerceService.Core.DTOs.Product;
 using EcommerceService.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 

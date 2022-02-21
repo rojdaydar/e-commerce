@@ -2,5 +2,5 @@
 
 public class IncreaseDto
 {
-    public string Time { get; set; }
+    public string Hour { get; set; }
 }

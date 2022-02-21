@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using DateTimeProviders;
 using EcommerceService.Core.Domain;
 using EcommerceService.Core.DTOs.Campaign;
 using EcommerceService.Core.Exceptions;
+using EcommerceService.Core.Extensions;
 using EcommerceService.Core.Repositories;
 using EcommerceService.Core.Services;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +26,7 @@ public class CampaignService : ICampaignService
 
     public void Create(CreateCampaignInput createCampaignInput)
     {
+        var ss = DateTimeProvider.Now;
         var campaign = _mapper.Map<Campaign>(createCampaignInput);
 
         var product = _productRepository.Find(p => p.ProductCode.Equals(campaign.ProductCode) && !p.IsDeleted);

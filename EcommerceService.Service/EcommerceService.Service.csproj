@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="11.0.1" />
+      <PackageReference Include="DateTimeProvider" Version="1.0.106" />
     </ItemGroup>
 
 </Project>

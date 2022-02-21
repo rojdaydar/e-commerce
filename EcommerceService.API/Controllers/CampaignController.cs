@@ -11,6 +11,7 @@ namespace EcommerceService.API.Controllers;
 public class CampaignController : ControllerBase
 {
     private readonly ICampaignService _campaignService;
+
     public CampaignController(ICampaignService campaignService)
     {
         _campaignService = campaignService;
@@ -25,23 +26,16 @@ public class CampaignController : ControllerBase
             StatusCode = (int) HttpStatusCode.Created
         };
     }
-    
+
     [HttpGet("{name}")]
     public ActionResult<CustomResponseDto<CampaignDto>> Detail(string name)
     {
         var campaignDto = _campaignService.Detail(name);
-        
+
         if (campaignDto is null)
             return new NoContentResult();
-        
+
         return new OkObjectResult(
             new CustomResponseDto<CampaignDto>().Success((int) HttpStatusCode.OK, campaignDto));
     }
-
-    [HttpPost("increase")]
-    public ActionResult<CustomResponseDto<IncreaseDto>> Increase(int hour)
-    {
-        return Ok();
-    }
-    
 }
